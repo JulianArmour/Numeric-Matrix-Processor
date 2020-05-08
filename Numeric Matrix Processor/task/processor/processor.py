@@ -39,14 +39,25 @@ def mul_matrices(m1, m2):
     return [[inner_product(m1_row, m2_col) for m2_col in zip(*m2)] for m1_row in m1]
 
 
+def transpose_vertical(matrix):
+    return [list(reversed(row)) for row in matrix]
+
+
+def transpose_horizontal(matrix):
+    return list(reversed(matrix))
+
+
+def transpose_main(matrix):
+    return [list(new_row) for new_row in zip(*matrix)]
+
+
+def transpose_side(matrix):
+    return transpose_main(transpose_horizontal(transpose_vertical(matrix)))
+
+
 def matrix_str(matrix):
     rows = (' '.join(map(str, row)) for row in matrix)
     return '\n'.join(rows)
-
-
-def menu():
-    return '\n'.join(['1. Add matrices', '2. Multiply matrix by a constant',
-                      '3. Multiply matrices', '0. Exit'])
 
 
 def prompt_two_matrices():
@@ -87,8 +98,26 @@ def multiply_matrices_routine():
         print(matrix_str(mul_matrices(matrix1, matrix2)))
 
 
+def transpose_matrix_routine():
+    print('\n', '\n'.join(['1. Main diagonal', '2. Side diagonal',
+                           '3. Vertical line', '4. Horizontal line']))
+    transpose_choice = input('Your choice: ')
+    height, width = prompt_dimensions('Enter matrix size: ')
+    m = prompt_matrix(height)
+    print('The result is:')
+    if transpose_choice == '1':
+        print(matrix_str(transpose_main(m)))
+    elif transpose_choice == '2':
+        print(matrix_str(transpose_side(m)))
+    elif transpose_choice == '3':
+        print(matrix_str(transpose_vertical(m)))
+    elif transpose_choice == '4':
+        print(matrix_str(transpose_horizontal(m)))
+
+
 while True:
-    print(menu())
+    print('\n'.join(['1. Add matrices', '2. Multiply matrix by a constant',
+                     '3. Multiply matrices', '4. Transpose matrix', '0. Exit']))
     choice = input('Your choice: ')
     if choice == '1':
         matrix_addition_routine()
@@ -96,5 +125,7 @@ while True:
         matrix_scalar_multiplication_routine()
     elif choice == '3':
         multiply_matrices_routine()
+    elif choice == '4':
+        transpose_matrix_routine()
     else:
         break
