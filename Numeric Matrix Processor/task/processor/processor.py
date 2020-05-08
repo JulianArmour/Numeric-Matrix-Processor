@@ -15,14 +15,15 @@ def matrix_dimensions(matrix):
     return len(matrix), len(matrix[0])
 
 
+def scalar_mul_matrix(scalar, matrix):
+    return [[scalar * elem for elem in row] for row in matrix]
+
+
 def print_matrix(matrix):
     for row in matrix:
         print(' '.join(map(str, row)))
 
 
-matrix1 = prompt_matrix()
-matrix2 = prompt_matrix()
-if matrix_dimensions(matrix1) != matrix_dimensions(matrix2):
-    print('ERROR')
-else:
-    print_matrix(add_matrices(matrix1, matrix2))
+m = prompt_matrix()
+scal = int(input())
+print_matrix(scalar_mul_matrix(scal, m))
