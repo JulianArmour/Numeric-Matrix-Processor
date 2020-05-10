@@ -15,7 +15,7 @@ def matrix_dimensions(matrix):
 
 
 def scalar_mul_matrix(scalar, matrix):
-    return [[scalar * elem for elem in row] for row in matrix]
+    return [[round(scalar * elem, 3) for elem in row] for row in matrix]
 
 
 def mul_matrices(m1, m2):
@@ -54,6 +54,11 @@ def cofactor(row, col, matrix):
     return (-1) ** (row + col) * minor(row, col, matrix)
 
 
+def cofactor_matrix(matrix):
+    height, width = matrix_dimensions(matrix)
+    return [[cofactor(row, col, matrix) for col in range(width)] for row in range(height)]
+
+
 def determinant(matrix):
     height, width = matrix_dimensions(matrix)
     if (height, width) == (1, 1):
@@ -63,6 +68,15 @@ def determinant(matrix):
     else:
         cofactors = [cofactor(0, col, matrix) for col in range(width)]
         return inner_product(matrix[0], cofactors)
+
+
+def inverse_matrix(matrix):
+    return scalar_mul_matrix(1 / determinant(matrix),
+                             transpose_main(cofactor_matrix(matrix)))
+
+
+def is_invertible(matrix):
+    return determinant(matrix) != 0
 
 
 def matrix_str(matrix):
@@ -146,6 +160,16 @@ def matrix_determinant_routine():
     print(determinant(m))
 
 
+def matrix_inverse_routine():
+    height, width = prompt_dimensions('Enter matrix size: ')
+    print('Enter matrix:')
+    m = prompt_matrix(height)
+    if not is_invertible(m):
+        print("This matrix doesn't have an inverse.")
+    else:
+        print(matrix_str(inverse_matrix(m)))
+
+
 while True:
     print('\n'.join(['1. Add matrices', '2. Multiply matrix by a constant',
                      '3. Multiply matrices', '4. Transpose matrix',
@@ -161,5 +185,7 @@ while True:
         transpose_matrix_routine()
     elif choice == '5':
         matrix_determinant_routine()
+    elif choice == '6':
+        matrix_inverse_routine()
     else:
         break
