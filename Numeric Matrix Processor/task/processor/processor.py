@@ -1,20 +1,3 @@
-def prompt_dimensions(query):
-    height, width = [int(dimension) for dimension in input(query).split()]
-    return height, width
-
-
-def as_number(number_str):
-    return int(number_str) if number_str.isnumeric() else float(number_str)
-
-
-def prompt_matrix(height):
-    return [[as_number(e) for e in input().split()] for _ in range(height)]
-
-
-def is_valid_matrix(height, width, matrix):
-    return height == len(matrix) and all(len(row) == width for row in matrix)
-
-
 def add_vectors(v1, v2):
     return [elem1 + elem2 for elem1, elem2 in zip(v1, v2)]
 
@@ -55,9 +38,49 @@ def transpose_side(matrix):
     return transpose_main(transpose_horizontal(transpose_vertical(matrix)))
 
 
+def del_row(row_target, matrix):
+    return [row for row_num, row in enumerate(matrix) if row_num != row_target]
+
+
+def del_col(col_target, matrix):
+    return transpose_main(del_row(col_target, transpose_main(matrix)))
+
+
+def minor(row, col, matrix):
+    return determinant(del_row(row, del_col(col, matrix)))
+
+
+def cofactor(row, col, matrix):
+    return (-1) ** (row + col) * minor(row, col, matrix)
+
+
+def determinant(matrix):
+    height, width = matrix_dimensions(matrix)
+    if (height, width) == (1, 1):
+        return matrix[0][0]
+    if (height, width) == (2, 2):
+        return matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]
+    else:
+        cofactors = [cofactor(0, col, matrix) for col in range(width)]
+        return inner_product(matrix[0], cofactors)
+
+
 def matrix_str(matrix):
     rows = (' '.join(map(str, row)) for row in matrix)
     return '\n'.join(rows)
+
+
+def prompt_dimensions(query):
+    height, width = [int(dimension) for dimension in input(query).split()]
+    return height, width
+
+
+def as_number(number_str):
+    return int(number_str) if number_str.isnumeric() else float(number_str)
+
+
+def prompt_matrix(height):
+    return [[as_number(e) for e in input().split()] for _ in range(height)]
 
 
 def prompt_two_matrices():
@@ -115,9 +138,18 @@ def transpose_matrix_routine():
         print(matrix_str(transpose_horizontal(m)))
 
 
+def matrix_determinant_routine():
+    height, width = prompt_dimensions('Enter matrix size: ')
+    print('Enter matrix:')
+    m = prompt_matrix(height)
+    print('The result is:')
+    print(determinant(m))
+
+
 while True:
     print('\n'.join(['1. Add matrices', '2. Multiply matrix by a constant',
-                     '3. Multiply matrices', '4. Transpose matrix', '0. Exit']))
+                     '3. Multiply matrices', '4. Transpose matrix',
+                     '5. Calculate a determinant', '0. Exit']))
     choice = input('Your choice: ')
     if choice == '1':
         matrix_addition_routine()
@@ -127,5 +159,7 @@ while True:
         multiply_matrices_routine()
     elif choice == '4':
         transpose_matrix_routine()
+    elif choice == '5':
+        matrix_determinant_routine()
     else:
         break
